@@ -1,0 +1,6 @@
+touch src/main/java/com/veterinaria/app/controller/.gitkeep
+touch src/main/java/com/veterinaria/app/service/.gitkeep
+touch src/main/java/com/veterinaria/app/dao/.gitkeep
+touch src/main/java/com/veterinaria/app/model/.gitkeep
+touch src/main/java/com/veterinaria/app/config/.gitkeep
+touch src/main/java/com/veterinaria/app/util/.gitkeep

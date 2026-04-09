@@ -34,3 +34,5 @@ build/
 
 # Archivo de configuración local con credenciales
 application-dev.yml
+
+target/
