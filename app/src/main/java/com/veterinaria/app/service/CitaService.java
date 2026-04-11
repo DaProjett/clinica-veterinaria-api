@@ -1,8 +1,9 @@
-package com.veterinaria.service;
+package com.veterinaria.app.service;
 
-import com.veterinaria.dao.CitaDao;
-import com.veterinaria.dao.MascotaDao;
-import com.veterinaria.model.Cita;
+
+import com.veterinaria.app.dao.CitaDao;
+import com.veterinaria.app.dao.MascotaDao;
+import com.veterinaria.app.model.Cita;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
