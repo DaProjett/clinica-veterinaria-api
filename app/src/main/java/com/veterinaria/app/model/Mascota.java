@@ -35,7 +35,7 @@ public class Mascota {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dueño_id", nullable = false)
-    private Dueño dueño;
+    private Dueno dueño;
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDate fechaRegistro;
@@ -51,7 +51,7 @@ public class Mascota {
     }
 
     public Mascota(String nombre, String especie, String raza, LocalDate fechaNacimiento,
-                   Sexo sexo, String color, Double peso, Dueño dueño) {
+                   Sexo sexo, String color, Double peso, Dueno dueño) {
         this();
         this.nombre = nombre;
         this.especie = especie;
@@ -128,11 +128,11 @@ public class Mascota {
         this.peso = peso;
     }
 
-    public Dueño getDueño() {
+    public Dueno getDueño() {
         return dueño;
     }
 
-    public void setDueño(Dueño dueño) {
+    public void setDueño(Dueno dueño) {
         this.dueño = dueño;
     }
 

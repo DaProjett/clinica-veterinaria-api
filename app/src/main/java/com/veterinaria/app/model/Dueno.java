@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "duenos")
-public class Dueño {
+public class Dueno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +30,11 @@ public class Dueño {
     private LocalDateTime fechaRegistro;
 
     // Constructores
-    public Dueño() {
+    public Dueno() {
         this.fechaRegistro = LocalDateTime.now();
     }
 
-    public Dueño(String nombreCompleto, String documentoIdentidad, String telefono, String email, String direccion) {
+    public Dueno(String nombreCompleto, String documentoIdentidad, String telefono, String email, String direccion) {
         this();
         this.nombreCompleto = nombreCompleto;
         this.documentoIdentidad = documentoIdentidad;
