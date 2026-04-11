@@ -1,11 +1,13 @@
-package com.veterinaria.service;
+package com.veterinaria.app.service;
 
-import com.veterinaria.dao.DuenoDao;
-import com.veterinaria.dao.MascotaDao;
-import com.veterinaria.model.Mascota;
+
+import com.veterinaria.app.dao.DuenoDao;
+import com.veterinaria.app.dao.MascotaDao;
+import com.veterinaria.app.model.Mascota;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 public class MascotaService {
