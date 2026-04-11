@@ -28,10 +28,6 @@ public class Cita {
     @JoinColumn(name = "mascota_id", nullable = false)
     private Mascota mascota;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "veterinario_id", nullable = false)
-    private Veterinario veterinario;
-
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
@@ -46,16 +42,15 @@ public class Cita {
         this.estado = Estado.PROGRAMADA;
     }
 
-    public Cita(LocalDateTime fechaHora, String motivo, Mascota mascota, Veterinario veterinario) {
+    public Cita(LocalDateTime fechaHora, String motivo, Mascota mascota) {
         this();
         this.fechaHora = fechaHora;
         this.motivo = motivo;
         this.mascota = mascota;
-        this.veterinario = veterinario;
     }
 
-    public Cita(LocalDateTime fechaHora, String motivo, String notas, Mascota mascota, Veterinario veterinario) {
-        this(fechaHora, motivo, mascota, veterinario);
+    public Cita(LocalDateTime fechaHora, String motivo, String notas, Mascota mascota) {
+        this(fechaHora, motivo, mascota);
         this.notas = notas;
     }
 
@@ -108,13 +103,6 @@ public class Cita {
         this.mascota = mascota;
     }
 
-    public Veterinario getVeterinario() {
-        return veterinario;
-    }
-
-    public void setVeterinario(Veterinario veterinario) {
-        this.veterinario = veterinario;
-    }
 
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
@@ -133,7 +121,6 @@ public class Cita {
                 ", estado=" + estado +
                 ", notas='" + notas + '\'' +
                 ", mascota=" + (mascota != null ? mascota.getId() : "null") +
-                ", veterinario=" + (veterinario != null ? veterinario.getId() : "null") +
                 ", fechaCreacion=" + fechaCreacion +
                 '}';
     }
