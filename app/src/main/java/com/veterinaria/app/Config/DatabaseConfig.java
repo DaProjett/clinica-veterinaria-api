@@ -1,4 +1,4 @@
-package com.veterinaria.app.config;
+package com.veterinaria.app.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

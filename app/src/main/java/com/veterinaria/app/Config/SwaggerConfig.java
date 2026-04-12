@@ -1,4 +1,4 @@
-package com.veterinaria.app.config;
+package com.veterinaria.app.Config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
