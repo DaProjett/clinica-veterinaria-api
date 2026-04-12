@@ -1,32 +1,15 @@
 package com.veterinaria.app.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "duenos")
 public class Dueno {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "nombre_completo", nullable = false, length = 100)
     private String nombreCompleto;
-
-    @Column(name = "documento_identidad", nullable = false, unique = true, length = 20)
     private String documentoIdentidad;
-
-    @Column(name = "telefono", length = 15)
     private String telefono;
-
-    @Column(name = "email", length = 100)
     private String email;
-
-    @Column(name = "direccion", length = 200)
     private String direccion;
-
-    @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
     // Constructores
