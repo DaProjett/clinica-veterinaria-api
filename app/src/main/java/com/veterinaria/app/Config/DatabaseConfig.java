@@ -13,8 +13,8 @@ public class DatabaseConfig {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); 
         dataSource.setUrl("jdbc:mysql://localhost:3306/veterinaria_db");
-        dataSource.setUsername("tu_usuario");
-        dataSource.setPassword("tu_password");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root3011");
         return dataSource;
     }
 }
