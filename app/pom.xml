@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.veterinaria</groupId>
-	<artifactId>app</artifactId>
+	<artifactId>clinica-veterinaria-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>Clinica Veterinaria API</name>
+	<description>API para gestión de clínica veterinaria con Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
