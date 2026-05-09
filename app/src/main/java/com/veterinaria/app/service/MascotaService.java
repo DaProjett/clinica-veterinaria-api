@@ -2,6 +2,7 @@ package com.veterinaria.app.service;
 
 
 import com.veterinaria.app.dao.DuenoDao;
+import com.veterinaria.app.MascotaRepository;
 import com.veterinaria.app.dao.MascotaDao;
 import com.veterinaria.app.model.Mascota;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,13 @@ import java.util.List;
 @Service
 public class MascotaService {
 
+    private final MascotaRepository mascotaRepository;
     private final MascotaDao mascotaDao;
     private final DuenoDao duenoDao;
 
-    public MascotaService(MascotaDao mascotaDao, DuenoDao duenoDao) {
-        this.mascotaDao = mascotaDao;
+    
+    public MascotaService(MascotaRepository mascotaRepository, DuenoDao duenoDao) {
+        this.mascotaRepository = mascotaRepository;
         this.duenoDao = duenoDao;
     }
 
@@ -25,7 +28,7 @@ public class MascotaService {
             return false;
         }
 
-        if (mascota.getNombre() == null || mascota.getNombre().trim().isEmpty()) {
+        if (mascota == null || mascota.getNombre() == null || mascota.getNombre().trim().isEmpty()) {
             return false;
         }
 
@@ -33,7 +36,7 @@ public class MascotaService {
             return false;
         }
 
-        if (mascota.getIdDueno() <= 0) {
+        if (mascota.getIdDueno() == null || mascota.getIdDueno() <= 0) {
             return false;
         }
 
@@ -41,33 +44,30 @@ public class MascotaService {
             return false;
         }
 
-        return mascotaDao.guardar(mascota);
+        mascotaRepository.save(mascota);
+        return true;
     }
 
     public List<Mascota> buscarTodos() {
-        return mascotaDao.buscarTodos();
+       return mascotaRepository.findAll();
     }
 
     public Mascota buscarPorId(int id) {
         if (id <= 0) {
             return null;
         }
-        return mascotaDao.buscarPorId(id);
+        return mascotaRepository.findById((long) id).orElse(null);
     }
 
     public List<Mascota> buscarPorDueno(int idDueno) {
         if (idDueno <= 0) {
             return List.of();
         }
-        return mascotaDao.buscarPorDueno(idDueno);
+         return mascotaRepository.findByDuenoId((long) idDueno);
     }
 
     public boolean actualizar(int id, Mascota mascota) {
-        if (id <= 0 || mascota == null) {
-            return false;
-        }
-
-        if (mascota.getNombre() == null || mascota.getNombre().trim().isEmpty()) {
+        if (id <= 0 || mascota == null || mascota.getNombre() == null || mascota.getNombre().trim().isEmpty()) {
             return false;
         }
 
@@ -75,7 +75,11 @@ public class MascotaService {
             return false;
         }
 
-        if (mascota.getIdDueno() <= 0) {
+        if (mascota.getIdDueno() == null || mascota.getIdDueno() <= 0) {
+            return false;
+        }
+
+        if (!mascotaRepository.existsById((long) id)) {
             return false;
         }
 
@@ -84,13 +88,19 @@ public class MascotaService {
         }
 
         mascota.setId(id);
-        return mascotaDao.actualizar(mascota);
+        mascotaRepository.save(mascota);
+        return true;
     }
 
     public boolean eliminar(int id) {
         if (id <= 0) {
             return false;
         }
-        return mascotaDao.eliminar(id);
+        if (!mascotaRepository.existsById((long) id)) {
+            return false;
+        }
+
+        mascotaRepository.deleteById((long) id);
+        return true;
     }
 }

@@ -1,14 +1,22 @@
 package com.veterinaria.app.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "mascotas")
 public class Mascota {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
     private String especie;
     private String raza;
     private LocalDate fechaNacimiento;
+    
+    @Enumerated(EnumType.STRING)
     private Sexo sexo;
     private String color;
     private Double peso;
