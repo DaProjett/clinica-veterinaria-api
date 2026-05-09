@@ -1,15 +1,29 @@
 package com.veterinaria.app.model;
 
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 public class Cita {
 
     private Long id;
+
+    @NotNull(message = "La fecha y hora son obligatorias")
+    @FutureOrPresent(message = "La fecha de la cita debe ser presente o futura")
     private LocalDateTime fechaHora;
+
+    @NotBlank(message = "El motivo es obligatorio")
+    @Size(min = 5, max = 200, message = "El motivo debe tener entre 5 y 200 caracteres")
     private String motivo;
+
+    @NotNull(message = "El estado es obligatorio")
     private Estado estado;
+
+    @Size(max = 500, message = "Las notas no pueden exceder 500 caracteres")
     private String notas;
+
+    @NotNull(message = "El ID de la mascota es obligatorio")
     private Long mascotaId;  // ID de la mascota en lugar de relación JPA
+
     private LocalDateTime fechaCreacion;
 
     // Enumeración para el estado de la cita

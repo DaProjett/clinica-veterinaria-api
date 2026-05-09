@@ -1,18 +1,37 @@
 package com.veterinaria.app.model;
 
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 public class Mascota {
 
     private Long id;
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
     private String nombre;
+
+    @NotBlank(message = "La especie es obligatoria")
+    @Size(max = 30, message = "La especie no puede exceder 30 caracteres")
     private String especie;
+
+    @Size(max = 30, message = "La raza no puede exceder 30 caracteres")
     private String raza;
+
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser futura")
     private LocalDate fechaNacimiento;
+
+    @NotNull(message = "El sexo es obligatorio")
     private Sexo sexo;
+
+    @Size(max = 30, message = "El color no puede exceder 30 caracteres")
     private String color;
+
+    @Positive(message = "El peso debe ser mayor a 0")
     private Double peso;
+
     private Long dueñoId;  // ID del dueño en lugar de relación JPA
+
     private LocalDate fechaRegistro;
 
     // Enumeración para el sexo
