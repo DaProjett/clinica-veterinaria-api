@@ -1,16 +1,15 @@
 package com.veterinaria.app.service;
 
-
 import com.veterinaria.app.dao.DuenoDao;
 import com.veterinaria.app.dao.MascotaDao;
 import com.veterinaria.app.model.Mascota;
+import com.veterinaria.app.service.interfaces.IMascotaService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
-public class MascotaService {
+public class MascotaService implements IMascotaService {
 
     private final MascotaDao mascotaDao;
     private final DuenoDao duenoDao;
@@ -20,6 +19,7 @@ public class MascotaService {
         this.duenoDao = duenoDao;
     }
 
+    @Override
     public boolean guardar(Mascota mascota) {
         if (mascota == null) {
             return false;
@@ -37,17 +37,19 @@ public class MascotaService {
             return false;
         }
 
-        if (duenoDao.buscarPorId(mascota.getIdDueno()) == null) {
+        if (duenoDao.buscarPorId((long) mascota.getIdDueno()) == null) {
             return false;
         }
 
         return mascotaDao.guardar(mascota);
     }
 
+    @Override
     public List<Mascota> buscarTodos() {
         return mascotaDao.buscarTodos();
     }
 
+    @Override
     public Mascota buscarPorId(int id) {
         if (id <= 0) {
             return null;
@@ -55,6 +57,7 @@ public class MascotaService {
         return mascotaDao.buscarPorId(id);
     }
 
+    @Override
     public List<Mascota> buscarPorDueno(int idDueno) {
         if (idDueno <= 0) {
             return List.of();
@@ -62,6 +65,7 @@ public class MascotaService {
         return mascotaDao.buscarPorDueno(idDueno);
     }
 
+    @Override
     public boolean actualizar(int id, Mascota mascota) {
         if (id <= 0 || mascota == null) {
             return false;
@@ -79,18 +83,3 @@ public class MascotaService {
             return false;
         }
 
-        if (duenoDao.buscarPorId(mascota.getIdDueno()) == null) {
-            return false;
-        }
-
-        mascota.setId(id);
-        return mascotaDao.actualizar(mascota);
-    }
-
-    public boolean eliminar(int id) {
-        if (id <= 0) {
-            return false;
-        }
-        return mascotaDao.eliminar(id);
-    }
-}
