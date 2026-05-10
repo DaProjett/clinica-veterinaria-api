@@ -1,16 +1,16 @@
 package com.veterinaria.app.service;
 
-
 import com.veterinaria.app.dao.CitaDao;
 import com.veterinaria.app.dao.MascotaDao;
 import com.veterinaria.app.model.Cita;
+import com.veterinaria.app.service.interfaces.ICitaService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CitaService {
+public class CitaService implements ICitaService {
 
     private final CitaDao citaDao;
     private final MascotaDao mascotaDao;
@@ -20,6 +20,7 @@ public class CitaService {
         this.mascotaDao = mascotaDao;
     }
 
+    @Override
     public boolean guardar(Cita cita) {
         if (cita == null) {
             return false;
@@ -44,10 +45,12 @@ public class CitaService {
         return citaDao.guardar(cita);
     }
 
+    @Override
     public List<Cita> buscarTodos() {
         return citaDao.buscarTodos();
     }
 
+    @Override
     public Cita buscarPorId(int id) {
         if (id <= 0) {
             return null;
@@ -55,6 +58,7 @@ public class CitaService {
         return citaDao.buscarPorId(id);
     }
 
+    @Override
     public boolean actualizar(int id, Cita cita) {
         if (id <= 0 || cita == null) {
             return false;
@@ -80,6 +84,7 @@ public class CitaService {
         return citaDao.actualizar(cita);
     }
 
+    @Override
     public boolean eliminar(int id) {
         if (id <= 0) {
             return false;
