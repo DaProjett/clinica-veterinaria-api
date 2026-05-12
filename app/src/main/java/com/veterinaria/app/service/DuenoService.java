@@ -73,3 +73,18 @@ public class DuenoService implements IDuenoService {
         }
 
         if (dueno.getEmail() == null || !dueno.getEmail().contains("@")) {
+            return false;
+        }
+
+        dueno.setId(id);
+        return duenoDao.actualizar(dueno);
+    }
+
+    @Override
+    public boolean eliminar(Long id) {
+        if (id == null || id <= 0) {
+            return false;
+        }
+        return duenoDao.eliminar(id);
+    }
+}
