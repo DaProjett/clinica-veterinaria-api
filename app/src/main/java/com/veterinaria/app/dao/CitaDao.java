@@ -6,9 +6,12 @@ import com.veterinaria.app.util.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.veterinaria.app.dao.interfaces.ICitaDao;
 
-public class CitaDao {
 
+public class CitaDao implements ICitaDao {
+    
+    @Override
     public boolean guardar(Cita cita) {
 
         Connection conn = null;
@@ -42,6 +45,7 @@ public class CitaDao {
         return false;
     }
 
+    @Override
     public List<Cita> buscarTodos() {
 
         List<Cita> lista = new ArrayList<>();
@@ -80,6 +84,7 @@ public class CitaDao {
         return lista;
     }
 
+    @Override
     public Cita buscarPorId(int id) {
 
         Connection conn = null;
@@ -118,7 +123,8 @@ public class CitaDao {
 
         return null;
     }
-
+    
+    @Override
     public boolean eliminar(int id) {
 
         Connection conn = null;
@@ -140,7 +146,7 @@ public class CitaDao {
 
         return false;
     }
-
+    
     private void cerrar(Connection c, Statement s, ResultSet r) {
         try {
             if (r != null) r.close();
