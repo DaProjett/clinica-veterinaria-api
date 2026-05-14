@@ -1,7 +1,10 @@
 package com.veterinaria.app.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "duenos")
@@ -11,23 +14,33 @@ public class Dueno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre completo es obligatorio")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
     @Column(name = "nombre_completo", nullable = false, length = 100)
     private String nombreCompleto;
 
+    @NotBlank(message = "El documento de identidad es obligatorio")
     @Column(name = "documento_identidad", nullable = false, unique = true, length = 20)
     private String documentoIdentidad;
 
-    @Column(name = "telefono", length = 15)
+    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
+    @Column(length = 20)
     private String telefono;
 
-    @Column(name = "email", length = 100)
+    @Email(message = "El email debe tener un formato válido")
+    @Size(max = 100, message = "El email no puede exceder 100 caracteres")
+    @Column(length = 100)
     private String email;
 
-    @Column(name = "direccion", length = 200)
+    @Size(max = 200, message = "La dirección no puede exceder 200 caracteres")
+    @Column(length = 200)
     private String direccion;
 
-    @Column(name = "fecha_registro", nullable = false)
+    @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
+
+    @OneToMany(mappedBy = "dueno", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mascota> mascotas = new ArrayList<>();
 
     // Constructores
     public Dueno() {
@@ -98,6 +111,26 @@ public class Dueno {
 
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    // Getters y Setters para la relación con Mascota
+    public List<Mascota> getMascotas() {
+        return mascotas;
+    }
+
+    public void setMascotas(List<Mascota> mascotas) {
+        this.mascotas = mascotas;
+    }
+
+    // Métodos helper para manejar la relación
+    public void addMascota(Mascota mascota) {
+        mascotas.add(mascota);
+        mascota.setDueno(this);
+    }
+
+    public void removeMascota(Mascota mascota) {
+        mascotas.remove(mascota);
+        mascota.setDueno(null);
     }
 
     @Override

@@ -1,34 +1,29 @@
 package com.veterinaria.app.model;
 
-import jakarta.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "citas")
 public class Cita {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fecha_hora", nullable = false)
+    @NotNull(message = "La fecha y hora son obligatorias")
+    @FutureOrPresent(message = "La fecha de la cita debe ser presente o futura")
     private LocalDateTime fechaHora;
 
-    @Column(name = "motivo", nullable = false, length = 200)
+    @NotBlank(message = "El motivo es obligatorio")
+    @Size(min = 5, max = 200, message = "El motivo debe tener entre 5 y 200 caracteres")
     private String motivo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false, length = 20)
+    @NotNull(message = "El estado es obligatorio")
     private Estado estado;
 
-    @Column(name = "notas", length = 500)
+    @Size(max = 500, message = "Las notas no pueden exceder 500 caracteres")
     private String notas;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mascota_id", nullable = false)
-    private Mascota mascota;
+    @NotNull(message = "El ID de la mascota es obligatorio")
+    private Long mascotaId;  // ID de la mascota en lugar de relación JPA
 
-    @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
     // Enumeración para el estado de la cita
@@ -42,15 +37,15 @@ public class Cita {
         this.estado = Estado.PROGRAMADA;
     }
 
-    public Cita(LocalDateTime fechaHora, String motivo, Mascota mascota) {
+    public Cita(LocalDateTime fechaHora, String motivo, Long mascotaId) {
         this();
         this.fechaHora = fechaHora;
         this.motivo = motivo;
-        this.mascota = mascota;
+        this.mascotaId = mascotaId;
     }
 
-    public Cita(LocalDateTime fechaHora, String motivo, String notas, Mascota mascota) {
-        this(fechaHora, motivo, mascota);
+    public Cita(LocalDateTime fechaHora, String motivo, String notas, Long mascotaId) {
+        this(fechaHora, motivo, mascotaId);
         this.notas = notas;
     }
 
@@ -95,12 +90,12 @@ public class Cita {
         this.notas = notas;
     }
 
-    public Mascota getMascota() {
-        return mascota;
+    public Long getMascotaId() {
+        return mascotaId;
     }
 
-    public void setMascota(Mascota mascota) {
-        this.mascota = mascota;
+    public void setMascotaId(Long mascotaId) {
+        this.mascotaId = mascotaId;
     }
 
 
@@ -120,7 +115,7 @@ public class Cita {
                 ", motivo='" + motivo + '\'' +
                 ", estado=" + estado +
                 ", notas='" + notas + '\'' +
-                ", mascota=" + (mascota != null ? mascota.getId() : "null") +
+                ", mascotaId=" + mascotaId +
                 ", fechaCreacion=" + fechaCreacion +
                 '}';
     }

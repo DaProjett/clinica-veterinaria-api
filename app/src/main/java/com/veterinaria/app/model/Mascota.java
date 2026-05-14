@@ -1,43 +1,37 @@
 package com.veterinaria.app.model;
 
-import jakarta.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "mascotas")
 public class Mascota {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 50)
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
     private String nombre;
 
-    @Column(name = "especie", nullable = false, length = 30)
+    @NotBlank(message = "La especie es obligatoria")
+    @Size(max = 30, message = "La especie no puede exceder 30 caracteres")
     private String especie;
 
-    @Column(name = "raza", length = 50)
+    @Size(max = 30, message = "La raza no puede exceder 30 caracteres")
     private String raza;
 
-    @Column(name = "fecha_nacimiento")
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser futura")
     private LocalDate fechaNacimiento;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "sexo", nullable = false, length = 10)
+    @NotNull(message = "El sexo es obligatorio")
     private Sexo sexo;
 
-    @Column(name = "color", length = 30)
+    @Size(max = 30, message = "El color no puede exceder 30 caracteres")
     private String color;
 
-    @Column(name = "peso")
+    @Positive(message = "El peso debe ser mayor a 0")
     private Double peso;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dueño_id", nullable = false)
-    private Dueno dueño;
+    private Long dueñoId;  // ID del dueño en lugar de relación JPA
 
-    @Column(name = "fecha_registro", nullable = false)
     private LocalDate fechaRegistro;
 
     // Enumeración para el sexo
@@ -51,7 +45,7 @@ public class Mascota {
     }
 
     public Mascota(String nombre, String especie, String raza, LocalDate fechaNacimiento,
-                   Sexo sexo, String color, Double peso, Dueno dueño) {
+                   Sexo sexo, String color, Double peso, Long dueñoId) {
         this();
         this.nombre = nombre;
         this.especie = especie;
@@ -60,7 +54,7 @@ public class Mascota {
         this.sexo = sexo;
         this.color = color;
         this.peso = peso;
-        this.dueño = dueño;
+        this.dueñoId = dueñoId;
     }
 
     // Getters y Setters
@@ -128,12 +122,12 @@ public class Mascota {
         this.peso = peso;
     }
 
-    public Dueno getDueño() {
-        return dueño;
+    public Long getDueñoId() {
+        return dueñoId;
     }
 
-    public void setDueño(Dueno dueño) {
-        this.dueño = dueño;
+    public void setDueñoId(Long dueñoId) {
+        this.dueñoId = dueñoId;
     }
 
     public LocalDate getFechaRegistro() {
@@ -155,7 +149,7 @@ public class Mascota {
                 ", sexo=" + sexo +
                 ", color='" + color + '\'' +
                 ", peso=" + peso +
-                ", dueño=" + (dueño != null ? dueño.getId() : "null") +
+                ", dueñoId=" + dueñoId +
                 ", fechaRegistro=" + fechaRegistro +
                 '}';
     }

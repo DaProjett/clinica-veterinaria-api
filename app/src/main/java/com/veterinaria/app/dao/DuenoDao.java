@@ -1,92 +1,87 @@
 package com.veterinaria.app.dao;
 
 import com.veterinaria.app.model.Dueno;
-import com.veterinaria.app.util.DatabaseConnection;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
+import com.veterinaria.app.dao.interfaces.IDuenoDao;
 
-public class DuenoDao {
+@Repository
+public class DuenoDao implements IDuenoDao {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    // Buscar por ID
     public Dueno buscarPorId(int id) {
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        String sql = """
-            SELECT id, nombre, telefono, email
-            FROM duenos
-            WHERE id = ?
-        """;
-
-        try {
-            conn = DatabaseConnection.getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                Dueno d = new Dueno();
-                d.setId(rs.getInt("id"));
-                d.setNombre(rs.getString("nombre"));
-                d.setTelefono(rs.getString("telefono"));
-                d.setEmail(rs.getString("email"));
-                return d;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            cerrar(conn, ps, rs);
-        }
-
-        return null;
+        return entityManager.find(Dueno.class, (long) id);
     }
 
+    // Listar todos
     public List<Dueno> buscarTodos() {
-
-        List<Dueno> lista = new ArrayList<>();
-        Connection conn = null;
-        Statement st = null;
-        ResultSet rs = null;
-
-        String sql = """
-            SELECT id, nombre, telefono, email
-            FROM duenos
-        """;
-
-        try {
-            conn = DatabaseConnection.getConnection();
-            st = conn.createStatement();
-            rs = st.executeQuery(sql);
-
-            while (rs.next()) {
-                Dueno d = new Dueno();
-                d.setId(rs.getInt("id"));
-                d.setNombre(rs.getString("nombre"));
-                d.setTelefono(rs.getString("telefono"));
-                d.setEmail(rs.getString("email"));
-                lista.add(d);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            cerrar(conn, st, rs);
-        }
-
-        return lista;
+        String jpql = "SELECT d FROM Dueno d";
+        TypedQuery<Dueno> query = entityManager.createQuery(jpql, Dueno.class);
+        return query.getResultList();
     }
 
-    private void cerrar(Connection c, Statement s, ResultSet r) {
+    // Guardar
+    @Transactional
+    public boolean guardar(Dueno dueno) {
         try {
-            if (r != null) r.close();
-            if (s != null) s.close();
-            if (c != null) c.close();
-        } catch (SQLException e) {
+            entityManager.persist(dueno);
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Actualizar
+    @Transactional
+    public boolean actualizar(Long id, Dueno dueno) {
+        try {
+            Dueno existente = entityManager.find(Dueno.class, id);
+
+            if (existente == null) {
+                return false;
+            }
+
+            existente.setNombreCompleto(dueno.getNombreCompleto());
+            existente.setDocumentoIdentidad(dueno.getDocumentoIdentidad());
+            existente.setTelefono(dueno.getTelefono());
+            existente.setEmail(dueno.getEmail());
+            existente.setDireccion(dueno.getDireccion());
+
+            entityManager.merge(existente);
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Eliminar
+    @Transactional
+    public boolean eliminar(Long id) {
+        try {
+            Dueno dueno = entityManager.find(Dueno.class, id);
+
+            if (dueno == null) {
+                return false;
+            }
+
+            entityManager.remove(dueno);
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
+``
