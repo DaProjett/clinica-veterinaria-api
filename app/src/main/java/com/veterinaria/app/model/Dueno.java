@@ -135,7 +135,7 @@ public class Dueno {
 
     @Override
     public String toString() {
-        return "Dueño{" +
+        return "Dueno{" +
                 "id=" + id +
                 ", nombreCompleto='" + nombreCompleto + '\'' +
                 ", documentoIdentidad='" + documentoIdentidad + '\'' +

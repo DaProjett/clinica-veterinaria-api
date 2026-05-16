@@ -1,38 +1,58 @@
 package com.veterinaria.app.model;
 
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "mascotas")
 public class Mascota {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
+    @Column(nullable = false, length = 50)
     private String nombre;
 
     @NotBlank(message = "La especie es obligatoria")
     @Size(max = 30, message = "La especie no puede exceder 30 caracteres")
+    @Column(length = 30)
     private String especie;
 
     @Size(max = 30, message = "La raza no puede exceder 30 caracteres")
+    @Column(length = 30)
     private String raza;
 
     @PastOrPresent(message = "La fecha de nacimiento no puede ser futura")
+    @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
     @NotNull(message = "El sexo es obligatorio")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Sexo sexo;
 
     @Size(max = 30, message = "El color no puede exceder 30 caracteres")
+    @Column(length = 30)
     private String color;
 
     @Positive(message = "El peso debe ser mayor a 0")
     private Double peso;
 
-    private Long dueñoId;  // ID del dueño en lugar de relación JPA
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dueno_id", nullable = false)
+    private Dueno dueno;
 
+    @Column(name = "fecha_registro")
     private LocalDate fechaRegistro;
+
+    @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cita> citas = new ArrayList<>();
 
     // Enumeración para el sexo
     public enum Sexo {
@@ -45,7 +65,7 @@ public class Mascota {
     }
 
     public Mascota(String nombre, String especie, String raza, LocalDate fechaNacimiento,
-                   Sexo sexo, String color, Double peso, Long dueñoId) {
+                   Sexo sexo, String color, Double peso, Dueno dueno) {
         this();
         this.nombre = nombre;
         this.especie = especie;
@@ -54,7 +74,8 @@ public class Mascota {
         this.sexo = sexo;
         this.color = color;
         this.peso = peso;
-        this.dueñoId = dueñoId;
+        this.dueno = dueno;
+        dueno.addMascota(this);
     }
 
     // Getters y Setters
@@ -122,12 +143,12 @@ public class Mascota {
         this.peso = peso;
     }
 
-    public Long getDueñoId() {
-        return dueñoId;
+    public Dueno getDueno() {
+        return dueno;
     }
 
-    public void setDueñoId(Long dueñoId) {
-        this.dueñoId = dueñoId;
+    public void setDueno(Dueno dueno) {
+        this.dueno = dueno;
     }
 
     public LocalDate getFechaRegistro() {
@@ -136,6 +157,25 @@ public class Mascota {
 
     public void setFechaRegistro(LocalDate fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    // Métodos helper para manejar la relación con Cita
+    public List<Cita> getCitas() {
+        return citas;
+    }
+
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
+    }
+
+    public void addCita(Cita cita) {
+        citas.add(cita);
+        cita.setMascota(this);
+    }
+
+    public void removeCita(Cita cita) {
+        citas.remove(cita);
+        cita.setMascota(null);
     }
 
     @Override
@@ -149,7 +189,6 @@ public class Mascota {
                 ", sexo=" + sexo +
                 ", color='" + color + '\'' +
                 ", peso=" + peso +
-                ", dueñoId=" + dueñoId +
                 ", fechaRegistro=" + fechaRegistro +
                 '}';
     }
