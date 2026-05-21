@@ -2,12 +2,13 @@ package com.veterinaria.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "duenos")
+@Table(name = "dueno")
 public class Dueno {
 
     @Id
@@ -40,6 +41,7 @@ public class Dueno {
     private LocalDateTime fechaRegistro;
 
     @OneToMany(mappedBy = "dueno", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("dueno")
     private List<Mascota> mascotas = new ArrayList<>();
 
     // Constructores

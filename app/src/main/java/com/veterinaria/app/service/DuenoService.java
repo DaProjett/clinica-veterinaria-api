@@ -1,83 +1,65 @@
 package com.veterinaria.app.service;
 
-import com.veterinaria.app.dao.DuenoDao;
 import com.veterinaria.app.model.Dueno;
+import com.veterinaria.app.repository.DuenoRepository;
 import com.veterinaria.app.service.interfaces.IDuenoService;
 import org.springframework.stereotype.Service;
 
+import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DuenoService implements IDuenoService {
 
-    private final DuenoDao duenoDao;
+    private final DuenoRepository duenoRepository;
 
-    public DuenoService(DuenoDao duenoDao) {
-        this.duenoDao = duenoDao;
+    public DuenoService(DuenoRepository duenoRepository) {
+        this.duenoRepository = duenoRepository;
     }
 
     @Override
-    public boolean guardar(Dueno dueno) {
+    public Dueno guardar(@Valid Dueno dueno) {
         if (dueno == null) {
-            return false;
+            throw new IllegalArgumentException("El dueño no puede ser nulo");
         }
 
         if (dueno.getNombreCompleto() == null || dueno.getNombreCompleto().trim().isEmpty()) {
-            return false;
+            throw new IllegalArgumentException("El nombre completo del dueño es obligatorio");
         }
 
         if (dueno.getDocumentoIdentidad() == null || dueno.getDocumentoIdentidad().trim().isEmpty()) {
-            return false;
+            throw new IllegalArgumentException("El documento de identidad del dueño es obligatorio");
         }
 
-        if (dueno.getTelefono() == null || dueno.getTelefono().trim().length() < 7) {
-            return false;
-        }
-
-        if (dueno.getEmail() == null || !dueno.getEmail().contains("@")) {
-            return false;
-        }
-
-        return duenoDao.guardar(dueno);
+        return duenoRepository.save(dueno);
     }
 
     @Override
     public List<Dueno> buscarTodos() {
-        return duenoDao.buscarTodos();
+        return duenoRepository.findAll();
     }
 
     @Override
-    public Dueno buscarPorId(Long id) {
+    public Optional<Dueno> buscarPorId(Long id) {
         if (id == null || id <= 0) {
-            return null;
+            return Optional.empty();
         }
-        return duenoDao.buscarPorId(id);
+        return duenoRepository.findById(id);
     }
 
     @Override
-    public boolean actualizar(Long id, Dueno dueno) {
-        if (id == null || id <= 0 || dueno == null) {
-            return false;
+    public Optional<Dueno> actualizar(Long id, @Valid Dueno dueno) {
+        if (id == null || id <= 0) {
+            return Optional.empty();
         }
 
-        if (dueno.getNombreCompleto() == null || dueno.getNombreCompleto().trim().isEmpty()) {
-            return false;
-        }
-
-        if (dueno.getDocumentoIdentidad() == null || dueno.getDocumentoIdentidad().trim().isEmpty()) {
-            return false;
-        }
-
-        if (dueno.getTelefono() == null || dueno.getTelefono().trim().length() < 7) {
-            return false;
-        }
-
-        if (dueno.getEmail() == null || !dueno.getEmail().contains("@")) {
-            return false;
+        if (!duenoRepository.existsById(id)) {
+            return Optional.empty();
         }
 
         dueno.setId(id);
-        return duenoDao.actualizar(dueno);
+        return Optional.of(duenoRepository.save(dueno));
     }
 
     @Override
@@ -85,6 +67,12 @@ public class DuenoService implements IDuenoService {
         if (id == null || id <= 0) {
             return false;
         }
-        return duenoDao.eliminar(id);
+
+        if (!duenoRepository.existsById(id)) {
+            return false;
+        }
+
+        duenoRepository.deleteById(id);
+        return true;
     }
 }

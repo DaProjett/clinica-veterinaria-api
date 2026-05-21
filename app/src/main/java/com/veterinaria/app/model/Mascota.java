@@ -2,12 +2,13 @@ package com.veterinaria.app.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "mascotas")
+@Table(name = "mascota")
 public class Mascota {
 
     @Id
@@ -46,12 +47,14 @@ public class Mascota {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dueno_id", nullable = false)
+    @JsonIgnoreProperties({"mascotas", "dueno"})
     private Dueno dueno;
 
     @Column(name = "fecha_registro")
     private LocalDate fechaRegistro;
 
     @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("mascota")
     private List<Cita> citas = new ArrayList<>();
 
     // Enumeración para el sexo

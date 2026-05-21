@@ -2,19 +2,20 @@ package com.veterinaria.app.controller;
 
 import com.veterinaria.app.model.Dueno;
 import com.veterinaria.app.service.DuenoService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/duenos")
+@CrossOrigin(origins = "*")
 public class DuenoController {
 
     private final DuenoService duenoService;
@@ -25,88 +26,106 @@ public class DuenoController {
 
     @Operation(summary = "Obtener todos los dueños")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Lista de dueños obtenida correctamente")
+        @ApiResponse(responseCode = "200", description = "Lista de dueños obtenida correctamente")
     })
-
-    @GetMapping
+    @GetMapping("/api/v1/duenos")
     public ResponseEntity<List<Dueno>> obtenerTodos() {
         List<Dueno> duenos = duenoService.buscarTodos();
         return ResponseEntity.ok(duenos);
     }
 
-
     @Operation(summary = "Obtener un dueño por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Dueño encontrado"),
-            @ApiResponse(responseCode = "404", description = "Dueño no encontrado")
+        @ApiResponse(responseCode = "200", description = "Dueño encontrado"),
+        @ApiResponse(responseCode = "404", description = "Dueño no encontrado")
     })
-    @GetMapping("/{id}")
-    public ResponseEntity<Dueno> obtenerPorId(@PathVariable int id) {
-        Dueno dueno = duenoService.buscarPorId(id);
+    @GetMapping("/api/v1/duenos/{id}")
+    public ResponseEntity<Dueno> obtenerPorId(@PathVariable Long id) {
+        Optional<Dueno> dueno = duenoService.buscarPorId(id);
 
-        if (dueno == null) {
+        if (dueno.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok(dueno);
+        return ResponseEntity.ok(dueno.get());
     }
 
     @Operation(summary = "Crear un nuevo dueño")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Dueño creado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        @ApiResponse(responseCode = "201", description = "Dueño creado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    @PostMapping
-    public ResponseEntity<String> crear(@RequestBody Dueno dueno) {
-        boolean guardado = duenoService.guardar(dueno);
-
-        if (!guardado) {
+    @PostMapping("/api/v1/duenos")
+    public ResponseEntity<?> crear(@Valid @RequestBody Dueno dueno) {
+        try {
+            Dueno guardado = duenoService.guardar(dueno);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(Map.of(
+                        "mensaje", "Dueño creado correctamente",
+                        "dueno", guardado,
+                        "status", "SUCCESS"
+                    ));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("No se pudo crear el dueño");
+                    .body(Map.of(
+                        "error", e.getMessage(),
+                        "status", "ERROR"
+                    ));
         }
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body("Dueño creado correctamente");
     }
 
     @Operation(summary = "Actualizar un dueño existente")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Dueño actualizado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        @ApiResponse(responseCode = "200", description = "Dueño actualizado"),
+        @ApiResponse(responseCode = "404", description = "Dueño no encontrado"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(
-            @PathVariable int id,
-            @RequestBody Dueno dueno) {
+    @PutMapping("/api/v1/duenos/{id}")
+    public ResponseEntity<?> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Dueno dueno) {
 
-        boolean actualizado = duenoService.actualizar(id, dueno);
+        Optional<Dueno> actualizado = duenoService.actualizar(id, dueno);
 
-        if (!actualizado) {
+        if (actualizado.isEmpty()) {
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("No se pudo actualizar el dueño");
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                        "error", "Dueño no encontrado",
+                        "status", "ERROR"
+                    ));
         }
 
-        return ResponseEntity.ok("Dueño actualizado correctamente");
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Dueño actualizado correctamente",
+            "dueno", actualizado.get(),
+            "status", "SUCCESS"
+        ));
     }
 
     @Operation(summary = "Eliminar un dueño por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Dueño eliminado"),
-            @ApiResponse(responseCode = "404", description = "Dueño no encontrado")
+        @ApiResponse(responseCode = "200", description = "Dueño eliminado"),
+        @ApiResponse(responseCode = "404", description = "Dueño no encontrado")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable int id) {
+    @DeleteMapping("/api/v1/duenos/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         boolean eliminado = duenoService.eliminar(id);
 
         if (!eliminado) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("No se pudo eliminar el dueño");
+                    .body(Map.of(
+                        "error", "Dueño no encontrado",
+                        "status", "ERROR"
+                    ));
         }
 
-        return ResponseEntity.ok("Dueño eliminado correctamente");
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Dueño eliminado correctamente",
+            "status", "SUCCESS"
+        ));
     }
 }

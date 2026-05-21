@@ -32,7 +32,17 @@ build/
 ### VS Code ###
 .vscode/
 
-# Archivo de configuración local con credenciales
+# Archivos de configuración local
 application-dev.yml
+application-local.properties
 
-target/
+# Archivos de ejecución
+*.sh
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
