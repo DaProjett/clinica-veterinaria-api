@@ -237,4 +237,72 @@ export const duenoService = {
   }
 };
 
+export const citaService = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/citas');
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error('Error fetching citas:', error);
+      throw error;
+    }
+  },
+
+  getById: async (id) => {
+    try {
+      const response = await api.get(`/citas/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching cita ${id}:`, error);
+      throw error;
+    }
+  },
+
+  getByMascota: async (mascotaId) => {
+    try {
+      const response = await api.get(`/citas/mascota/${mascotaId}`);
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error(`Error fetching citas for mascota ${mascotaId}:`, error);
+      throw error;
+    }
+  },
+
+  create: async (cita) => {
+    try {
+      const response = await api.post('/citas', cita);
+      return response.data?.cita || response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error ||
+                          error.response?.data?.message ||
+                          'Error al crear la cita';
+      console.error('Error creating cita:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  },
+
+  update: async (id, cita) => {
+    try {
+      const response = await api.put(`/citas/${id}`, cita);
+      return response.data?.cita || response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.error ||
+                          error.response?.data?.message ||
+                          `Error al actualizar la cita ${id}`;
+      console.error(`Error updating cita ${id}:`, errorMessage);
+      throw new Error(errorMessage);
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      await api.delete(`/citas/${id}`);
+      return true;
+    } catch (error) {
+      console.error(`Error deleting cita ${id}:`, error);
+      throw error;
+    }
+  }
+};
+
 export default api;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Row, Col, Alert, Spinner, Modal } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mascotaService } from '../services/api';
@@ -11,11 +11,7 @@ const MascotaDetail = () => {
   const [error, setError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  useEffect(() => {
-    fetchMascota();
-  }, [id]);
-
-  const fetchMascota = async () => {
+  const fetchMascota = useCallback(async () => {
     try {
       setLoading(true);
       const data = await mascotaService.getById(id);
@@ -30,7 +26,11 @@ const MascotaDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchMascota();
+  }, [fetchMascota]);
 
   const handleDelete = async () => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Form, Button, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mascotaService, duenoService } from '../services/api';
@@ -24,14 +24,7 @@ const MascotaForm = () => {
 
   const isEditing = Boolean(id);
 
-  useEffect(() => {
-    fetchDuenos();
-    if (isEditing) {
-      fetchMascota();
-    }
-  }, [id, isEditing]);
-
-  const fetchDuenos = async () => {
+  const fetchDuenos = useCallback(async () => {
     try {
       console.log('Cargando dueños...');
       const data = await duenoService.getAll();
@@ -44,9 +37,9 @@ const MascotaForm = () => {
       setError('Error al cargar la lista de dueños');
       setDuenos([]);
     }
-  };
+  }, []);
 
-  const fetchMascota = async () => {
+  const fetchMascota = useCallback(async () => {
     try {
       setLoading(true);
       const mascota = await mascotaService.getById(id);
@@ -70,7 +63,14 @@ const MascotaForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchDuenos();
+    if (isEditing) {
+      fetchMascota();
+    }
+  }, [fetchDuenos, fetchMascota, isEditing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
